@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1012276452544",
+    "project_id": "harmonycollective-d613d",
+    "storage_bucket": "harmonycollective-d613d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012276452544:android:7b3379f2bf83487edbe125",
+        "android_client_info": {
+          "package_name": "com.example.hc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012276452544-fkl2l8imp57po92pgm7ksuisj1usctpg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6wAx3HBgjZ6omI3O3fldpUlitMPQgZXI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012276452544-fkl2l8imp57po92pgm7ksuisj1usctpg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

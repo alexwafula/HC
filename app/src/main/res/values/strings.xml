@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">HC</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Playlists</string>
+    <string name="recommendations">Recommendations</string>
+    <string name="title_notifications">Settings</string>
+    <string name="default_web_client_id">1012276452544-fkl2l8imp57po92pgm7ksuisj1usctpg.apps.googleusercontent.com</string>
+    <string-array name="gender_options">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Non-binary</item>
+        <item>Other</item>
+        <item>Prefer not to say</item>
+    </string-array>
+
+</resources>
