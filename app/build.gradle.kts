@@ -51,6 +51,7 @@ dependencies {
     implementation (libs.converter.gson)
     implementation (libs.glide)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore)
     annotationProcessor (libs.compiler)
     implementation (platform(libs.firebase.bom))
     implementation (libs.play.services.auth)

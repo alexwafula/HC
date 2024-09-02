@@ -39,6 +39,8 @@
                     android:scheme="${redirectSchemeName}" />
             </intent-filter>
         </activity>
+        <activity android:name=".auth.SigninActivity" />
+        <activity android:name=".auth.LogininActivity" />
 
         <!-- Main Activity -->
         <activity

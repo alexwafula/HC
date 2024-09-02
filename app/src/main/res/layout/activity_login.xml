@@ -32,7 +32,7 @@
         android:layout_marginTop="20dp" />
 
     <Button
-        android:id="@+id/connectSpotifyButton"
+        android:id="@+id/SignupButton"
         android:layout_width="195dp"
         android:layout_height="41dp"
         android:layout_marginTop="240dp"
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@id/additionalText" />
 
     <Button
-        android:id="@+id/signinWithGoogle"
+        android:id="@+id/LoginButton"
         android:layout_width="203dp"
         android:layout_height="39dp"
         android:layout_marginTop="296dp"
