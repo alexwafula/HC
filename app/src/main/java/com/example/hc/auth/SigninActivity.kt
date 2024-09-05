@@ -1,17 +1,14 @@
 package com.example.hc.auth
 
-import android.os.Bundle
 import android.app.DatePickerDialog
-import java.util.Calendar
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.Toast
+import android.os.Bundle
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.hc.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.*
 
 class SigninActivity : AppCompatActivity() {
 
@@ -20,6 +17,8 @@ class SigninActivity : AppCompatActivity() {
     private lateinit var passwordInput: EditText
     private lateinit var genderSpinner: Spinner
     private lateinit var createAccountButton: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var dimmingOverlay: View
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
@@ -37,12 +36,18 @@ class SigninActivity : AppCompatActivity() {
         passwordInput = findViewById(R.id.passwordInput)
         genderSpinner = findViewById(R.id.genderSpinner)
         createAccountButton = findViewById(R.id.createAccountButton)
+        progressBar = findViewById(R.id.progressBar)
+        dimmingOverlay = findViewById(R.id.dimmingOverlay)
 
         dobInput.setOnClickListener {
             showDatePickerDialog()
         }
 
         createAccountButton.setOnClickListener {
+            // Show the dimming overlay and progress bar
+            dimmingOverlay.visibility = View.VISIBLE
+            progressBar.visibility = View.VISIBLE
+
             registerUser()
         }
     }
@@ -86,18 +91,31 @@ class SigninActivity : AppCompatActivity() {
                             db.collection("users").document(it).set(user)
                                 .addOnSuccessListener {
                                     Toast.makeText(this, "User registered successfully!", Toast.LENGTH_SHORT).show()
+                                    // Hide the dimming overlay and progress bar
+                                    dimmingOverlay.visibility = View.GONE
+                                    progressBar.visibility = View.GONE
                                     // Navigate to MainActivity or perform other actions
                                 }
                                 .addOnFailureListener { e ->
                                     Toast.makeText(this, "Failed to store user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    // Hide the dimming overlay and progress bar on failure
+                                    dimmingOverlay.visibility = View.GONE
+                                    progressBar.visibility = View.GONE
                                 }
                         }
                     } else {
                         Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        // Hide the dimming overlay and progress bar on failure
+                        dimmingOverlay.visibility = View.GONE
+                        progressBar.visibility = View.GONE
                     }
                 }
         } else {
             Toast.makeText(this, "Please fill in all the fields.", Toast.LENGTH_SHORT).show()
+            // Hide the dimming overlay and progress bar if inputs are incomplete
+            dimmingOverlay.visibility = View.GONE
+            progressBar.visibility = View.GONE
         }
     }
 }
+
