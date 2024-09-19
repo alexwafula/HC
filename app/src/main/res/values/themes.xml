@@ -50,9 +50,6 @@
     </style>
     <!-- Splash Screen Theme -->
     <style name="Theme.Splash" parent="Theme.Material3.Light.NoActionBar">
-        <!-- Set the background to a drawable or color -->
-        <!--item name="android:windowBackground">@drawable/splash_background</item-->
-        <!-- Optionally hide the status bar for a fullscreen splash -->
-        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 </resources>

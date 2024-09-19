@@ -47,6 +47,9 @@ android {
 }
 
 dependencies {
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
+    implementation (libs.okhttp)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation (libs.glide)
