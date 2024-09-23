@@ -8,6 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.hc.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import okhttp3.ResponseBody
+import com.example.hc.models.UserProfile
+import com.example.hc.api.ApiService
+import com.example.hc.network.RetrofitInstance
 import java.util.*
 
 class SigninActivity : AppCompatActivity() {
@@ -79,30 +86,41 @@ class SigninActivity : AppCompatActivity() {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        // Store user data in Firestore
                         val userId = auth.currentUser?.uid
-                        val user = hashMapOf(
-                            "email" to email,
-                            "date_of_birth" to dob,
-                            "gender" to gender
+                        val userProfile = UserProfile(
+                            user_id = userId ?: "",  // Ensure user ID is available
+                            email = email,
+                            dob = dob,
+                            gender = gender,
+
                         )
 
-                        userId?.let {
-                            db.collection("users").document(it).set(user)
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "User registered successfully!", Toast.LENGTH_SHORT).show()
+                        // Call the API to create the user profile
+                        val apiService = RetrofitInstance.getRetrofitInstance().create(ApiService::class.java)
+                        apiService.createUserProfile(userProfile).enqueue(object : Callback<ResponseBody> {
+                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(this@SigninActivity, "User registered successfully!", Toast.LENGTH_SHORT).show()
                                     // Hide the dimming overlay and progress bar
                                     dimmingOverlay.visibility = View.GONE
                                     progressBar.visibility = View.GONE
                                     // Navigate to MainActivity or perform other actions
-                                }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(this, "Failed to store user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this@SigninActivity, "Failed to create user profile: ${response.message()}", Toast.LENGTH_SHORT).show()
                                     // Hide the dimming overlay and progress bar on failure
                                     dimmingOverlay.visibility = View.GONE
                                     progressBar.visibility = View.GONE
                                 }
-                        }
+                            }
+
+                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                Toast.makeText(this@SigninActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                                // Hide the dimming overlay and progress bar on failure
+                                dimmingOverlay.visibility = View.GONE
+                                progressBar.visibility = View.GONE
+                            }
+                        })
+
                     } else {
                         Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                         // Hide the dimming overlay and progress bar on failure
