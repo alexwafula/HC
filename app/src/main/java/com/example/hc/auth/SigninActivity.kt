@@ -1,6 +1,7 @@
 package com.example.hc.auth
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -14,6 +15,7 @@ import retrofit2.Response
 import okhttp3.ResponseBody
 import com.example.hc.models.UserProfile
 import com.example.hc.api.ApiService
+import com.example.hc.artists.ArtistSelectionActivity
 import com.example.hc.network.RetrofitInstance
 import java.util.*
 
@@ -105,6 +107,9 @@ class SigninActivity : AppCompatActivity() {
                                     dimmingOverlay.visibility = View.GONE
                                     progressBar.visibility = View.GONE
                                     // Navigate to MainActivity or perform other actions
+                                     val intent = Intent(this@SigninActivity, ArtistSelectionActivity::class.java)
+                                     startActivity(intent)
+                                     finish()
                                 } else {
                                     Toast.makeText(this@SigninActivity, "Failed to create user profile: ${response.message()}", Toast.LENGTH_SHORT).show()
                                     // Hide the dimming overlay and progress bar on failure

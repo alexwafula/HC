@@ -1,5 +1,6 @@
 package com.example.hc.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -7,6 +8,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.hc.MainActivity
 import com.example.hc.R
 import com.google.firebase.auth.FirebaseAuth
 
@@ -64,9 +66,9 @@ class LogininActivity : AppCompatActivity() {
                     // Login successful
                     Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
                     // Redirect to MainActivity or any other activity
-                    // val intent = Intent(this, MainActivity::class.java)
-                    // startActivity(intent)
-                    // finish()
+                     val intent = Intent(this, MainActivity::class.java)
+                     startActivity(intent)
+                     finish()
                 } else {
                     // If login fails, display a message to the user
                     Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
