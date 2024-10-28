@@ -71,7 +71,7 @@
         <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -82,11 +82,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Dimming Overlay -->
-    <View
-        android:id="@+id/dimmingOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000"
-        android:visibility="gone"/>
 </FrameLayout>

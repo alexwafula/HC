@@ -4,6 +4,8 @@ import android.util.Log
 import android.widget.Toast
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +24,7 @@ class ArtistSelectionActivity : AppCompatActivity() {
     private var artistList: MutableList<Artist> = mutableListOf()
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
+    private lateinit var progressBar: ProgressBar
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +46,9 @@ class ArtistSelectionActivity : AppCompatActivity() {
         }
         artistRecyclerView.adapter = artistAdapter
 
+        // Initialize the ProgressBar
+        progressBar = findViewById(R.id.progressBar)
+
         // Fetch artists from Firestore
         fetchArtistsFromFirestore()
 
@@ -63,8 +69,14 @@ class ArtistSelectionActivity : AppCompatActivity() {
 
     // Fetch artist list from Firestore
     private fun fetchArtistsFromFirestore() {
+        // Show the ProgressBar when starting the fetch
+        progressBar.visibility = View.VISIBLE
+
         firestore.collection("artists").get()
             .addOnCompleteListener { task ->
+                // Hide the ProgressBar when the fetch is complete
+                progressBar.visibility = View.GONE
+
                 if (task.isSuccessful) {
                     artistList.clear()
                     for (document in task.result) {

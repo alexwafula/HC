@@ -9,41 +9,54 @@
     android:paddingTop="24dp">
 
     <!-- Title at the top -->
-<TextView
-android:id="@+id/selectArtistTitle"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:text="Select Your Favorite Artists (At least 3)"
-android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-android:textAlignment="center"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintTop_toTopOf="parent"
-android:layout_marginTop="16dp"
-android:padding="16dp" />
+    <TextView
+        android:id="@+id/selectArtistTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Select Your Favorite Artists (At least 3)"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:padding="16dp" />
 
     <!-- SearchView for searching artists -->
-<androidx.appcompat.widget.SearchView
-android:id="@+id/searchView"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:queryHint="Search artists"
-app:layout_constraintTop_toBottomOf="@id/selectArtistTitle"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintEnd_toEndOf="parent"
-android:layout_marginStart="16dp"
-android:layout_marginEnd="16dp"
-android:layout_marginTop="8dp" />
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:queryHint="Search artists"
+        app:layout_constraintTop_toBottomOf="@id/selectArtistTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp" />
 
     <!-- RecyclerView for listing artists -->
-<androidx.recyclerview.widget.RecyclerView
-android:id="@+id/artistRecyclerView"
-android:layout_width="0dp"
-android:layout_height="0dp"
-android:layout_margin="16dp"
-app:layout_constraintTop_toBottomOf="@id/searchView"
-app:layout_constraintBottom_toBottomOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintEnd_toEndOf="parent" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/artistRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@id/searchView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- ProgressBar for loading indicator -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleLarge"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -18,7 +18,6 @@ class LogininActivity : AppCompatActivity() {
     private lateinit var passwordInput: EditText
     private lateinit var loginButton: Button
     private lateinit var progressBar: ProgressBar
-    private lateinit var dimmingOverlay: View
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +32,7 @@ class LogininActivity : AppCompatActivity() {
         passwordInput = findViewById(R.id.passwordInput)
         loginButton = findViewById(R.id.createAccountButton)
         progressBar = findViewById(R.id.progressBar)
-        dimmingOverlay = findViewById(R.id.dimmingOverlay)
+
 
         // Set click listener on the login button
         loginButton.setOnClickListener {
@@ -45,9 +44,6 @@ class LogininActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            // Show the progress bar and dimming overlay
-            dimmingOverlay.visibility = View.VISIBLE
             progressBar.visibility = View.VISIBLE
 
             // Call login function
@@ -58,8 +54,7 @@ class LogininActivity : AppCompatActivity() {
     private fun loginUser(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
-                // Hide the progress bar and dimming overlay when the task completes
-                dimmingOverlay.visibility = View.GONE
+                // Hide the progress bar when the task completes
                 progressBar.visibility = View.GONE
 
                 if (task.isSuccessful) {

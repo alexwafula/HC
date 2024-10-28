@@ -27,7 +27,7 @@ class SigninActivity : AppCompatActivity() {
     private lateinit var genderSpinner: Spinner
     private lateinit var createAccountButton: Button
     private lateinit var progressBar: ProgressBar
-    private lateinit var dimmingOverlay: View
+
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
@@ -46,15 +46,14 @@ class SigninActivity : AppCompatActivity() {
         genderSpinner = findViewById(R.id.genderSpinner)
         createAccountButton = findViewById(R.id.createAccountButton)
         progressBar = findViewById(R.id.progressBar)
-        dimmingOverlay = findViewById(R.id.dimmingOverlay)
+
 
         dobInput.setOnClickListener {
             showDatePickerDialog()
         }
 
         createAccountButton.setOnClickListener {
-            // Show the dimming overlay and progress bar
-            dimmingOverlay.visibility = View.VISIBLE
+            // Show the progress bar
             progressBar.visibility = View.VISIBLE
 
             registerUser()
@@ -103,8 +102,7 @@ class SigninActivity : AppCompatActivity() {
                             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                                 if (response.isSuccessful) {
                                     Toast.makeText(this@SigninActivity, "User registered successfully!", Toast.LENGTH_SHORT).show()
-                                    // Hide the dimming overlay and progress bar
-                                    dimmingOverlay.visibility = View.GONE
+                                    // Hide the progress bar
                                     progressBar.visibility = View.GONE
                                     // Navigate to MainActivity or perform other actions
                                      val intent = Intent(this@SigninActivity, ArtistSelectionActivity::class.java)
@@ -112,31 +110,27 @@ class SigninActivity : AppCompatActivity() {
                                      finish()
                                 } else {
                                     Toast.makeText(this@SigninActivity, "Failed to create user profile: ${response.message()}", Toast.LENGTH_SHORT).show()
-                                    // Hide the dimming overlay and progress bar on failure
-                                    dimmingOverlay.visibility = View.GONE
+                                    // Hide the progress bar on failure
                                     progressBar.visibility = View.GONE
                                 }
                             }
 
                             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                                 Toast.makeText(this@SigninActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-                                // Hide the dimming overlay and progress bar on failure
-                                dimmingOverlay.visibility = View.GONE
+                                // Hide the  progress bar on failure
                                 progressBar.visibility = View.GONE
                             }
                         })
 
                     } else {
                         Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                        // Hide the dimming overlay and progress bar on failure
-                        dimmingOverlay.visibility = View.GONE
+                        // Hide the progress bar on failure
                         progressBar.visibility = View.GONE
                     }
                 }
         } else {
             Toast.makeText(this, "Please fill in all the fields.", Toast.LENGTH_SHORT).show()
-            // Hide the dimming overlay and progress bar if inputs are incomplete
-            dimmingOverlay.visibility = View.GONE
+            // Hide the progress bar if inputs are incomplete
             progressBar.visibility = View.GONE
         }
     }
