@@ -1,22 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<!-- File: res/layout/fragment_settings.xml -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.notifications.NotificationsFragment">
+    android:background="@drawable/logo"
+    android:padding="16dp"
+    android:alpha="0.4"
+    android:scaleType="centerCrop">
 
-    <TextView
-        android:id="@+id/text_notifications"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:textSize="24sp"
+            android:textColor="#FF03DAC5"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Harmony Collective\nˈhɑːməni kəˈlɛktɪv\n/ˈhɑːməni kəˈlɛktɪv,/\nnoun"
+            android:textColor="#FF000000"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="An introductory piece of music, most commonly an orchestral opening to an act of an opera, the first movement of a suite, or a piece preceding a fugue."
+            android:textColor="#FF000000"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hi! Thanks for checking out Harmony Collective.\n\nI created this app because I was looking to track my listening habits and discover new music in a condensed and digestible way.\n\nHarmony Collective is a quick insight to your musical taste, which I think says a lot about you.\n\nI'm happy you're here."
+            android:textColor="#FF000000"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log Out"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FF03DAC5"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/privacy_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Privacy Policy"
+            android:textColor="#FF000000"
+            android:layout_marginBottom="16dp"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="© 2024 Harmony Collective • Version 1.0.1"
+            android:textColor="#FF000000" />
+    </LinearLayout>
+</ScrollView>
+
