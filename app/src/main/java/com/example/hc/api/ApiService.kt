@@ -18,7 +18,4 @@ interface ApiService {
     @GET("/recommendations/{genre}")
     fun getRecommendations(@Path("genre") genre: String): Call<RecommendationsResponse>
 
-    @GET("privacy") // Adjust the endpoint if necessary
-    fun getPrivacyPolicy(): Call<JsonObject>
-
 }
