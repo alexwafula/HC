@@ -74,8 +74,16 @@ class SigninActivity : AppCompatActivity() {
             },
             year, month, day
         )
+
+        // Set the maximum date to 13 years ago from today
+        val maxCalendar = Calendar.getInstance()
+        maxCalendar.set(Calendar.YEAR, year - 13)
+        datePickerDialog.datePicker.maxDate = maxCalendar.timeInMillis
+
         datePickerDialog.show()
     }
+
+
 
     private fun registerUser() {
         val email = emailInput.text.toString().trim()

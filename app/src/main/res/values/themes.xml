@@ -51,5 +51,7 @@
     <!-- Splash Screen Theme -->
     <style name="Theme.Splash" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/md_theme_primary</item> <!-- Set the window background color -->
+        <item name="android:statusBarColor">@color/md_theme_primary</item> <!-- Set the status bar color -->
     </style>
 </resources>
