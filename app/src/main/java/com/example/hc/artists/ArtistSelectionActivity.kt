@@ -1,6 +1,8 @@
 package com.example.hc.artists
 
+import android.content.Intent
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,6 +12,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.hc.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,9 +25,11 @@ class ArtistSelectionActivity : AppCompatActivity() {
     private lateinit var artistRecyclerView: RecyclerView
     private lateinit var artistAdapter: ArtistAdapter
     private var artistList: MutableList<Artist> = mutableListOf()
+    private var selectedArtists: MutableList<Artist> = mutableListOf() // Track selected artists
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private lateinit var progressBar: ProgressBar
+    private lateinit var nextButton: Button // "Next" button reference
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,15 +44,16 @@ class ArtistSelectionActivity : AppCompatActivity() {
         artistRecyclerView = findViewById(R.id.artistRecyclerView)
         artistRecyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Initialize the ProgressBar and "Next" Button
+        progressBar = findViewById(R.id.progressBar)
+        nextButton = findViewById(R.id.nextButton) // Button should be in the XML layout
+        nextButton.visibility = View.GONE // Hide initially
+
         // Set the adapter
         artistAdapter = ArtistAdapter(artistList) { artist ->
-            // Handle the artist selection logic here
-            addArtistToUserFavorites(artist)
+            toggleArtistSelection(artist) // New method to handle selection
         }
         artistRecyclerView.adapter = artistAdapter
-
-        // Initialize the ProgressBar
-        progressBar = findViewById(R.id.progressBar)
 
         // Fetch artists from Firestore
         fetchArtistsFromFirestore()
@@ -65,25 +71,57 @@ class ArtistSelectionActivity : AppCompatActivity() {
                 return false
             }
         })
+
+        // Set click listener for "Next" button to navigate
+        nextButton.setOnClickListener {
+            if (selectedArtists.size >= 3) {
+                sendSelectionsToDb() // Send data to the database
+                navigateToMainActivity() // Function to navigate
+            }
+        }
+    }
+
+    // Toggle artist selection and update the UI accordingly
+    private fun toggleArtistSelection(artist: Artist) {
+        if (selectedArtists.contains(artist)) {
+            selectedArtists.remove(artist)
+        } else {
+            selectedArtists.add(artist)
+        }
+
+        // Show or hide the "Next" button based on the selection count
+        nextButton.visibility = if (selectedArtists.size >= 3) View.VISIBLE else View.GONE
+    }
+
+    // Send selected artists to Firestore only if 3 or more are chosen
+    private fun sendSelectionsToDb() {
+        val userId = auth.currentUser?.uid
+        if (userId != null && selectedArtists.size >= 3) {
+            val userFavoritesRef = firestore.collection("users").document(userId)
+            userFavoritesRef.update("favorite_artists", FieldValue.arrayUnion(*selectedArtists.toTypedArray()))
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Favorites updated!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ArtistSelectionActivity", "Error updating favorites", e)
+                    Toast.makeText(this, "Failed to update favorites. Try again.", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
     // Fetch artist list from Firestore
     private fun fetchArtistsFromFirestore() {
-        // Show the ProgressBar when starting the fetch
         progressBar.visibility = View.VISIBLE
-
         firestore.collection("artists").get()
             .addOnCompleteListener { task ->
-                // Hide the ProgressBar when the fetch is complete
                 progressBar.visibility = View.GONE
-
                 if (task.isSuccessful) {
                     artistList.clear()
                     for (document in task.result) {
                         val artist = document.toObject(Artist::class.java)
                         artistList.add(artist)
                     }
-                    artistAdapter.notifyDataSetChanged() // Notify adapter of data change
+                    artistAdapter.notifyDataSetChanged()
                 }
             }
     }
@@ -94,66 +132,19 @@ class ArtistSelectionActivity : AppCompatActivity() {
             artist.name.toLowerCase().contains(query?.toLowerCase() ?: "")
         }
         artistAdapter = ArtistAdapter(filteredList.toMutableList()) { artist ->
-            addArtistToUserFavorites(artist)
+            toggleArtistSelection(artist)
         }
         artistRecyclerView.adapter = artistAdapter
     }
 
-    // Add selected artist to user's favorites in Firestore
-    private fun addArtistToUserFavorites(artist: Artist) {
-        val userId = auth.currentUser?.uid // Get current user ID
-        if (userId != null) {
-            val userFavoritesRef = firestore.collection("users").document(userId)
-
-            // First, check if 'favorite_artists' field exists
-            userFavoritesRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        // Log that the document exists
-                        Log.d("ArtistSelectionActivity", "User document exists. Adding artist to favorites.")
-
-                        // Field exists, so update it
-                        userFavoritesRef.update("favorite_artists", FieldValue.arrayUnion(artist))
-                            .addOnSuccessListener {
-                                // Artist added successfully
-                                Log.d("ArtistSelectionActivity", "Artist added to user's favorites successfully.")
-                                Toast.makeText(this, "${artist.name} added to favorites!", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                // Handle error when adding artist
-                                Log.e("ArtistSelectionActivity", "Error adding artist to favorites", e)
-                                Toast.makeText(this, "Failed to add artist. Try again.", Toast.LENGTH_SHORT).show()
-                            }
-                    } else {
-                        // If document doesn't exist, create the field and add the artist
-                        Log.d("ArtistSelectionActivity", "User document does not exist. Creating document and adding artist.")
-                        val favoriteArtists = hashMapOf(
-                            "favorite_artists" to listOf(artist)
-                        )
-                        userFavoritesRef.set(favoriteArtists)
-                            .addOnSuccessListener {
-                                // Artist added successfully in a new field
-                                Log.d("ArtistSelectionActivity", "New document created and artist added to favorites successfully.")
-                                Toast.makeText(this, "${artist.name} added to favorites!", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                // Handle error when creating document
-                                Log.e("ArtistSelectionActivity", "Error creating user document", e)
-                                Toast.makeText(this, "Failed to add artist. Try again.", Toast.LENGTH_SHORT).show()
-                            }
-                    }
-                }
-                .addOnFailureListener { e ->
-                    // Handle error when fetching user document
-                    Log.e("ArtistSelectionActivity", "Error fetching user document", e)
-                    Toast.makeText(this, "Failed to retrieve user data. Try again.", Toast.LENGTH_SHORT).show()
-                }
-        } else {
-            // Handle the case where the user is not logged in
-            Log.e("ArtistSelectionActivity", "User not logged in.")
-            Toast.makeText(this, "Please log in to add favorites.", Toast.LENGTH_SHORT).show()
-        }
+    // Navigate to the Main Activity
+    private fun navigateToMainActivity() {
+        // Intent logic to navigate to MainActivity
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
+
 
 

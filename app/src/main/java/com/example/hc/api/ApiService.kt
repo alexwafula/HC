@@ -17,5 +17,4 @@ interface ApiService {
 
     @GET("/recommendations/{genre}")
     fun getRecommendations(@Path("genre") genre: String): Call<RecommendationsResponse>
-
 }

@@ -59,30 +59,38 @@ class SigninActivity : AppCompatActivity() {
             registerUser()
         }
     }
-
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
+        // Create DatePickerDialog
         val datePickerDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = "${selectedDay}/${selectedMonth + 1}/$selectedYear"
-                dobInput.setText(formattedDate)
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(selectedYear, selectedMonth, selectedDay)
+
+                // Check if the selected date is within the valid range
+                val maxCalendar = Calendar.getInstance()
+                maxCalendar.set(year - 13, month, day)
+
+                if (selectedDate.timeInMillis <= maxCalendar.timeInMillis) {
+                    val formattedDate = "${selectedDay}/${selectedMonth + 1}/$selectedYear"
+                    dobInput.setText(formattedDate)
+                } else {
+                    Toast.makeText(this, "You must be at least 13 years old to register.", Toast.LENGTH_SHORT).show()
+                }
             },
             year, month, day
         )
 
-        // Set the maximum date to 13 years ago from today
-        val maxCalendar = Calendar.getInstance()
-        maxCalendar.set(Calendar.YEAR, year - 13)
-        datePickerDialog.datePicker.maxDate = maxCalendar.timeInMillis
+        // Allow all dates to be shown, but restrict selection programmatically
+        datePickerDialog.datePicker.maxDate = Calendar.getInstance().timeInMillis // Current date as max
 
         datePickerDialog.show()
     }
-
 
 
     private fun registerUser() {
