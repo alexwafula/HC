@@ -28,7 +28,6 @@ class SigninActivity : AppCompatActivity() {
     private lateinit var createAccountButton: Button
     private lateinit var progressBar: ProgressBar
 
-
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
 
@@ -47,7 +46,6 @@ class SigninActivity : AppCompatActivity() {
         createAccountButton = findViewById(R.id.createAccountButton)
         progressBar = findViewById(R.id.progressBar)
 
-
         dobInput.setOnClickListener {
             showDatePickerDialog()
         }
@@ -55,24 +53,22 @@ class SigninActivity : AppCompatActivity() {
         createAccountButton.setOnClickListener {
             // Show the progress bar
             progressBar.visibility = View.VISIBLE
-
             registerUser()
         }
     }
+
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        // Create DatePickerDialog
         val datePickerDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(selectedYear, selectedMonth, selectedDay)
 
-                // Check if the selected date is within the valid range
                 val maxCalendar = Calendar.getInstance()
                 maxCalendar.set(year - 13, month, day)
 
@@ -85,13 +81,9 @@ class SigninActivity : AppCompatActivity() {
             },
             year, month, day
         )
-
-        // Allow all dates to be shown, but restrict selection programmatically
-        datePickerDialog.datePicker.maxDate = Calendar.getInstance().timeInMillis // Current date as max
-
+        datePickerDialog.datePicker.maxDate = Calendar.getInstance().timeInMillis
         datePickerDialog.show()
     }
-
 
     private fun registerUser() {
         val email = emailInput.text.toString().trim()
@@ -103,52 +95,59 @@ class SigninActivity : AppCompatActivity() {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        val userId = auth.currentUser?.uid
+                        val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
                         val userProfile = UserProfile(
-                            user_id = userId ?: "",  // Ensure user ID is available
+                            user_id = userId,
                             email = email,
                             dob = dob,
-                            gender = gender,
-
+                            gender = gender
                         )
 
-                        // Call the API to create the user profile
-                        val apiService = RetrofitInstance.getRetrofitInstance().create(ApiService::class.java)
-                        apiService.createUserProfile(userProfile).enqueue(object : Callback<ResponseBody> {
-                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                                if (response.isSuccessful) {
-                                    Toast.makeText(this@SigninActivity, "User registered successfully!", Toast.LENGTH_SHORT).show()
-                                    // Hide the progress bar
-                                    progressBar.visibility = View.GONE
-                                    // Navigate to MainActivity or perform other actions
-                                     val intent = Intent(this@SigninActivity, ArtistSelectionActivity::class.java)
-                                     startActivity(intent)
-                                     finish()
-                                } else {
-                                    Toast.makeText(this@SigninActivity, "Failed to create user profile: ${response.message()}", Toast.LENGTH_SHORT).show()
-                                    // Hide the progress bar on failure
-                                    progressBar.visibility = View.GONE
-                                }
-                            }
+                        // Save to Firestore
+                        db.collection("users").document(userId)
+                            .set(userProfile)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "User profile saved to Firestore!", Toast.LENGTH_SHORT).show()
 
-                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                                Toast.makeText(this@SigninActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-                                // Hide the  progress bar on failure
+                                // Call API to save the user profile
+                                val apiService = RetrofitInstance.getHarmonyCollectiveRetrofit().create(ApiService::class.java)
+                                apiService.createUserProfile(userProfile).enqueue(object : Callback<ResponseBody> {
+                                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                        if (response.isSuccessful) {
+                                            Toast.makeText(this@SigninActivity, "User registered successfully!", Toast.LENGTH_SHORT).show()
+                                            progressBar.visibility = View.GONE
+
+                                            // Navigate to ArtistSelectionActivity
+                                            val intent = Intent(this@SigninActivity, ArtistSelectionActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                        } else {
+                                            Toast.makeText(this@SigninActivity, "API failed: ${response.message()}", Toast.LENGTH_SHORT).show()
+                                            progressBar.visibility = View.GONE
+                                        }
+                                    }
+
+                                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                        Toast.makeText(this@SigninActivity, "API error: ${t.message}", Toast.LENGTH_SHORT).show()
+                                        progressBar.visibility = View.GONE
+                                    }
+                                })
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Failed to save user profile: ${e.message}", Toast.LENGTH_SHORT).show()
                                 progressBar.visibility = View.GONE
                             }
-                        })
 
                     } else {
                         Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                        // Hide the progress bar on failure
                         progressBar.visibility = View.GONE
                     }
                 }
         } else {
             Toast.makeText(this, "Please fill in all the fields.", Toast.LENGTH_SHORT).show()
-            // Hide the progress bar if inputs are incomplete
             progressBar.visibility = View.GONE
         }
     }
 }
+
 

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -56,6 +57,7 @@ dependencies {
     implementation (libs.glide)
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.crashlytics)
     annotationProcessor (libs.compiler)
     implementation (platform(libs.firebase.bom))
     implementation (libs.play.services.auth)

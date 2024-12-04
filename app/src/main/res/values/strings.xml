@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HC</string>
+    <string name="app_name">Harmony Collective</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Playlists</string>
     <string name="recommendations">Recommendations</string>
@@ -12,5 +12,8 @@
         <item>Other</item>
         <item>Prefer not to say</item>
     </string-array>
+    <string name="avatar_image">User Avatar</string>
+    <string name="sample_message">Welcome! Have a great day ahead!</string>
+    <string name="recommended_songs">Recommended Songs</string>
 
 </resources>

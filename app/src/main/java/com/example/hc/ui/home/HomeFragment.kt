@@ -1,41 +1,45 @@
 package com.example.hc.ui.home
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.example.hc.databinding.FragmentHomeBinding
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.example.hc.R
+import kotlinx.coroutines.flow.collect
 
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
-class HomeFragment : Fragment() {
-    private var _binding: FragmentHomeBinding? = null
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private val viewModel: HomeViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+    private lateinit var avatarImageView: ImageView
+    private lateinit var dailyMessageTextView: TextView
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        avatarImageView = view.findViewById(R.id.avatarImageView)
+        dailyMessageTextView = view.findViewById(R.id.dailyMessageTextView)
+
+        // Observe the avatar URL and update ImageView with Glide
+        lifecycleScope.launchWhenStarted {
+            viewModel.avatar.collect { url ->
+                if (url != null) {
+                    Glide.with(requireContext())
+                        .load(url)
+                        .into(avatarImageView)
+                }
+            }
         }
-        return root
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+
+        // Observe the daily message and update TextView
+        lifecycleScope.launchWhenStarted {
+            viewModel.message.collect { message ->
+                dailyMessageTextView.text = message
+            }
+        }
     }
 }
-
