@@ -15,5 +15,6 @@
     <string name="avatar_image">User Avatar</string>
     <string name="sample_message">Welcome! Have a great day ahead!</string>
     <string name="recommended_songs">Recommended Songs</string>
+    <string name="create_playlist">Create Playlist</string>
 
 </resources>
