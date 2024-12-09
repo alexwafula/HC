@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hc.R
-import com.example.hc.databinding.FragmentDashboardBinding
 import com.example.hc.adapters.PlaylistAdapter
+import com.example.hc.databinding.FragmentDashboardBinding
 
 class DashboardFragment : Fragment() {
 
@@ -31,14 +31,16 @@ class DashboardFragment : Fragment() {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        dashboardViewModel.autoLoadPlaylists(requireContext()) // Auto-load user playlists
         setupRecyclerView()
         setupFab()
+        observePlaylists()
 
         return root
     }
 
     private fun setupRecyclerView() {
-        adapter = PlaylistAdapter(emptyList())  // Initially empty list
+        adapter = PlaylistAdapter(emptyList()) // Initially empty list
         binding.recyclerViewPlaylists.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewPlaylists.adapter = adapter
     }
@@ -59,8 +61,7 @@ class DashboardFragment : Fragment() {
             .setPositiveButton("Create") { dialog, _ ->
                 val playlistName = playlistNameInput.text.toString().trim()
                 if (playlistName.isNotEmpty()) {
-                    dashboardViewModel.addPlaylist(playlistName)  // Add playlist via ViewModel
-                    Toast.makeText(context, "Playlist '$playlistName' created!", Toast.LENGTH_SHORT).show()
+                    dashboardViewModel.addPlaylist(requireContext(), playlistName)
                     dialog.dismiss()
                 } else {
                     Toast.makeText(context, "Please enter a playlist name.", Toast.LENGTH_SHORT).show()
@@ -72,8 +73,16 @@ class DashboardFragment : Fragment() {
         dialogBuilder.create().show()
     }
 
+    private fun observePlaylists() {
+        dashboardViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
+            adapter = PlaylistAdapter(playlists)
+            binding.recyclerViewPlaylists.adapter = adapter
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
