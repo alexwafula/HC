@@ -1,40 +1,149 @@
 package com.example.hc.ui.recs
 
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.graphics.pdf.PdfDocument
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.hc.adapters.RecommendationAdapter
 import com.example.hc.databinding.FragmentRecsBinding
-
-
+import com.example.hc.models.SongRecommendation
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 class RecsFragment : Fragment() {
 
     private var _binding: FragmentRecsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val recsViewModel =
-            ViewModelProvider(this).get(RecsViewModel::class.java)
+    private val recsViewModel: RecsViewModel by viewModels()
+    private lateinit var recommendationAdapter: RecommendationAdapter
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentRecsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textRecs
-        recsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        // Set up RecyclerView
+        recommendationAdapter = RecommendationAdapter(emptyList()) { }
+        binding.recommendationsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = recommendationAdapter
         }
+
+        // Set up search functionality
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { recsViewModel.filterRecommendations(it) }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { recsViewModel.filterRecommendations(it) }
+                return false
+            }
+        })
+
+        // Observe filtered recommendations and update RecyclerView
+        recsViewModel.filteredRecommendations.observe(viewLifecycleOwner) { filteredList ->
+            recommendationAdapter.updateRecommendationList(filteredList)
+        }
+
+        // Set up download button
+        binding.downloadButton.setOnClickListener {
+            val recommendations = recsViewModel.filteredRecommendations.value ?: emptyList()
+            downloadRecommendationsAsPdf(recommendations)
+        }
+
         return root
+    }
+
+    private fun downloadRecommendationsAsPdf(recommendations: List<SongRecommendation>) {
+        if (recommendations.isNotEmpty()) {
+            val fileName = "recommendations.pdf"
+            val pdfFile = File(requireContext().cacheDir, fileName)
+
+            try {
+                val pdfDocument = PdfDocument()
+                val pageInfo = PdfDocument.PageInfo.Builder(500, 700, 1).create()
+                val page = pdfDocument.startPage(pageInfo)
+                val canvas = page.canvas
+                val paint = Paint().apply {
+                    isAntiAlias = true
+                    color = Color.BLACK
+                }
+
+                // Header
+                paint.textSize = 20f
+                paint.typeface = Typeface.create(Typeface.DEFAULT_BOLD, Typeface.NORMAL)
+                canvas.drawText("Music Recommendations", 150f, 50f, paint)
+
+                // Table header
+                paint.textSize = 14f
+                canvas.drawText("No.", 30f, 80f, paint)
+                canvas.drawText("Song Title", 90f, 80f, paint)
+                canvas.drawText("Artist", 300f, 80f, paint)
+                canvas.drawLine(30f, 85f, 470f, 85f, paint) // Underline header
+
+                // Recommendations (Table Content)
+                var yPosition = 100f
+                recommendations.forEachIndexed { index, song ->
+                    canvas.drawText("${index + 1}", 30f, yPosition, paint)
+                    canvas.drawText(song.title, 90f, yPosition, paint)
+                    canvas.drawText(song.artist, 300f, yPosition, paint)
+                    yPosition += 20f
+                }
+
+                // Footer
+                paint.textSize = 12f
+                val footerText = "Generated by Harmony Collective for ${FirebaseAuth.getInstance().currentUser?.email} at ${System.currentTimeMillis()} "
+                val footerWidth = paint.measureText(footerText)
+                canvas.drawText(footerText, 500f - footerWidth - 10f, 690f, paint)
+
+                pdfDocument.finishPage(page)
+
+                // Save PDF
+                FileOutputStream(pdfFile).use { pdfDocument.writeTo(it) }
+                pdfDocument.close()
+
+                // Share PDF
+                val fileUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "${requireContext().packageName}.provider",
+                    pdfFile
+                )
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "application/pdf"
+                    putExtra(Intent.EXTRA_STREAM, fileUri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(Intent.createChooser(shareIntent, "Share Recommendations"))
+
+            } catch (e: Exception) {
+                Log.e("RecsFragment", "Error creating PDF: ${e.message}", e)
+                Toast.makeText(requireContext(), "Failed to create PDF", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(requireContext(), "No recommendations to download.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {

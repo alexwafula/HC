@@ -3,6 +3,7 @@ agp = "8.3.0"
 androidsvg = "1.4"
 auth = "2.1.0"
 coil = "2.4.0"
+exoplayer = "2.14.1"
 firebaseBom = "33.2.0"
 glide = "4.12.0"
 kotlin = "1.9.0"
@@ -17,8 +18,8 @@ material = "1.10.0"
 constraintlayout = "2.1.4"
 lifecycleLivedataKtx = "2.6.1"
 lifecycleViewmodelKtx = "2.6.1"
-navigationFragmentKtx = "2.6.0"
-navigationUiKtx = "2.6.0"
+navigationFragmentKtx = "2.8.5"
+navigationUiKtx = "2.8.5"
 legacySupportV4 = "1.0.0"
 fragmentKtx = "1.5.6"
 okhttp = "4.9.3"
@@ -31,6 +32,7 @@ firebaseFirestore = "25.1.0"
 mediationTestSuite = "3.0.0"
 firebaseCrashlytics = "19.2.1"
 googleFirebaseCrashlytics = "3.0.2"
+uiTextAndroid = "1.7.6"
 
 [libraries]
 androidsvg = { module = "com.caverock:androidsvg", version.ref = "androidsvg" }
@@ -40,6 +42,7 @@ coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+exoplayer = { module = "com.google.android.exoplayer2:exoplayer", version.ref = "exoplayer" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -64,6 +67,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
 
 
 [plugins]

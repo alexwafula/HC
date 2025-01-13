@@ -3,6 +3,7 @@ package com.example.hc.api
 import com.example.hc.models.RecommendationsResponse
 import com.example.hc.models.UserProfile
 import com.google.gson.JsonObject
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -17,4 +18,5 @@ interface ApiService {
 
     @GET("/recommendations/{genre}")
     fun getRecommendations(@Path("genre") genre: String): Call<RecommendationsResponse>
+
 }

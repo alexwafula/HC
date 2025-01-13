@@ -44,6 +44,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true // Enable data binding
     }
 }
 
@@ -58,6 +59,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.androidx.ui.text.android)
     annotationProcessor (libs.compiler)
     implementation (platform(libs.firebase.bom))
     implementation (libs.play.services.auth)

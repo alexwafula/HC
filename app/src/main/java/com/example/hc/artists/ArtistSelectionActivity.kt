@@ -12,12 +12,12 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hc.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.hc.R
 import com.example.hc.adapters.ArtistAdapter
+import com.example.hc.auth.LogininActivity
 import com.example.hc.models.Artist
 
 class ArtistSelectionActivity : AppCompatActivity() {
@@ -76,7 +76,7 @@ class ArtistSelectionActivity : AppCompatActivity() {
         nextButton.setOnClickListener {
             if (selectedArtists.size >= 3) {
                 sendSelectionsToDb() // Send data to the database
-                navigateToMainActivity() // Function to navigate
+                navigateToLogininActivity() // Function to navigate
             }
         }
     }
@@ -138,9 +138,9 @@ class ArtistSelectionActivity : AppCompatActivity() {
     }
 
     // Navigate to the Main Activity
-    private fun navigateToMainActivity() {
-        // Intent logic to navigate to MainActivity
-        val intent = Intent(this, MainActivity::class.java)
+    private fun navigateToLogininActivity() {
+        // Intent logic to navigate to LogininActivity
+        val intent = Intent(this, LogininActivity::class.java)
         startActivity(intent)
         finish()
     }

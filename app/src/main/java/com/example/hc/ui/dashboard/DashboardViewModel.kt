@@ -31,7 +31,10 @@ class DashboardViewModel : ViewModel() {
         // Add the playlist to the Firestore collection
         db.collection("playlists")
             .add(playlist)
-            .addOnSuccessListener {
+            .addOnSuccessListener { documentReference ->
+                // Once the playlist is added, get its document ID and update the playlist object
+                playlist.playlistId = documentReference.id
+
                 // Update the local LiveData
                 val currentPlaylists = _playlists.value?.toMutableList() ?: mutableListOf()
                 currentPlaylists.add(playlist)
@@ -45,6 +48,7 @@ class DashboardViewModel : ViewModel() {
                 Toast.makeText(context, "Failed to create playlist: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     // Function to fetch playlists for the current user and load them
     fun fetchUserPlaylists(context: Context) {
@@ -71,6 +75,22 @@ class DashboardViewModel : ViewModel() {
             }
             .addOnFailureListener { e ->
                 Toast.makeText(context, "Failed to load playlists: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    // Add this function to DashboardViewModel
+    fun deletePlaylist(context: Context, playlist: Playlist) {
+        db.collection("playlists").document(playlist.playlistId).delete()
+            .addOnSuccessListener {
+                Toast.makeText(context, "Playlist '${playlist.name}' deleted successfully.", Toast.LENGTH_SHORT).show()
+
+                // Update the LiveData to remove the deleted playlist
+                val updatedPlaylists = _playlists.value?.toMutableList() ?: mutableListOf()
+                updatedPlaylists.remove(playlist)
+                _playlists.value = updatedPlaylists
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to delete playlist: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

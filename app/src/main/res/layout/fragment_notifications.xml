@@ -33,14 +33,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="An introductory piece of music, most commonly an orchestral opening to an act of an opera, the first movement of a suite, or a piece preceding a fugue."
+            android:text="A curated journey through soundscapes, designed to help you discover, connect, and harmonize with music that truly resonates with you."
             android:textColor="#FF000000"
             android:layout_marginBottom="24dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hi! Thanks for checking out Harmony Collective.\n\nI created this app because I was looking to track my listening habits and discover new music in a condensed and digestible way.\n\nHarmony Collective is a quick insight to your musical taste, which I think says a lot about you.\n\nI'm happy you're here."
+            android:text="Welcome to Harmony Collective!\n\nThis app was created to celebrate the beauty of music and how it reflects our unique identities. It's a place where your listening habits are transformed into meaningful insights and tailored recommendations.\n\nDive into your musical world, discover fresh tracks, and curate playlists that speak to your soul.\n\nWe're thrilled to have you join the Harmony Collective community."
             android:textColor="#FF000000"
             android:layout_marginBottom="24dp" />
 
@@ -78,7 +78,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="© 2024 Harmony Collective • Version 1.0.1"
+            android:text="© 2024 Harmony Collective • Version 1.0.0"
             android:textColor="#FF000000" />
     </LinearLayout>
 </ScrollView>
