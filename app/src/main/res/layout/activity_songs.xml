@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:paddingHorizontal="16dp"
-                android:text="Add Songs" />
+                android:text="Update Playlist" />
         </LinearLayout>
 
         <!-- ProgressBar for loading indicator -->

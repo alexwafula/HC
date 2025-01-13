@@ -11,13 +11,13 @@ import com.example.hc.models.Song
 
 class SongAdapter(
     private var songs: List<Song>,
-    private val currentPlaylistSongs: Set<Song>, // Tracks current playlist songs
-    private val mode: Mode, // Determines the adapter mode
-    private val onSongAction: ((Song, Boolean) -> Unit)? = null, // Optional listener for add/remove actions
-    private val onAddSongClick: ((Song, Boolean) -> Unit)? = null // Optional listener for add/remove actions in ADD mode
+    private val currentPlaylistSongs: Set<Song>,
+    private val mode: Mode,
+    private val onSongAction: ((Song, Action) -> Unit)? = null
 ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 
-    enum class Mode { VIEW, ADD } // Modes for the adapter: VIEW or ADD
+    enum class Mode { VIEW, ADD }
+    enum class Action { ADD, REMOVE }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_song, parent, false)
@@ -26,8 +26,8 @@ class SongAdapter(
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val song = songs[position]
-        val isInPlaylist = currentPlaylistSongs.contains(song) // Check if the song is already in the playlist
-        holder.bind(song, mode, isInPlaylist, onSongAction, onAddSongClick)
+        val isInPlaylist = currentPlaylistSongs.contains(song)
+        holder.bind(song, mode, isInPlaylist, onSongAction)
     }
 
     override fun getItemCount(): Int = songs.size
@@ -42,43 +42,34 @@ class SongAdapter(
             song: Song,
             mode: Mode,
             isInPlaylist: Boolean,
-            onSongAction: ((Song, Boolean) -> Unit)?,
-            onAddSongClick: ((Song, Boolean) -> Unit)?
+            onSongAction: ((Song, Action) -> Unit)?
         ) {
             songTitle.text = song.title
             songArtist.text = song.artist
 
-            if (mode == Mode.VIEW) {
-                // In VIEW mode, hide both Add and Remove buttons
-                addSongButton.visibility = View.GONE
-                removeSongButton.visibility = View.GONE
-            } else if (mode == Mode.ADD) {
-                // In ADD mode, show only the Add button and handle logic for adding songs
-                addSongButton.visibility = View.VISIBLE
-                removeSongButton.visibility = View.GONE // Remove button is always hidden in ADD mode
+            when (mode) {
+                Mode.VIEW -> {
+                    addSongButton.visibility = View.GONE
+                    removeSongButton.visibility = View.GONE
+                }
+                Mode.ADD -> {
+                    addSongButton.visibility = if (!isInPlaylist) View.VISIBLE else View.GONE
+                    removeSongButton.visibility = if (isInPlaylist) View.VISIBLE else View.GONE
 
-                var isChecked = isInPlaylist // Use the initial state based on the playlist
-                addSongButton.text = if (isChecked) "Added" else "+"
+                    addSongButton.setOnClickListener {
+                        onSongAction?.invoke(song, Action.ADD)
+                    }
 
-                addSongButton.setOnClickListener {
-                    isChecked = !isChecked
-                    onAddSongClick?.invoke(song, isChecked)
-
-                    // Update button text based on selection state
-                    addSongButton.text = if (isChecked) "Added" else "+"
+                    removeSongButton.setOnClickListener {
+                        onSongAction?.invoke(song, Action.REMOVE)
+                    }
                 }
             }
         }
     }
 
-    // Update the list of songs dynamically
     fun updateSongs(newSongs: List<Song>) {
         songs = newSongs
         notifyDataSetChanged()
     }
 }
-
-
-
-
-

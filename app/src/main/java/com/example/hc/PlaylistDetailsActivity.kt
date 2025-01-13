@@ -44,16 +44,20 @@ class PlaylistDetailsActivity : AppCompatActivity() {
         loadPlaylistSongs()
         setupAddSongsButton()
     }
-
     private fun setupRecyclerView() {
-        // Use Mode.VIEW to ensure buttons are hidden
-        adapter = SongAdapter(emptyList(), emptySet(), SongAdapter.Mode.VIEW) { _, _ ->
-            // No action needed, as buttons will always be hidden
-        }
+        // Use Mode.VIEW to ensure buttons are hidden and no action is needed
+        adapter = SongAdapter(
+            emptyList(),
+            emptySet(),
+            SongAdapter.Mode.VIEW,
+            onSongAction = { _, _ ->
+                // No action needed, as buttons will always be hidden in VIEW mode
+            }
+        )
+
         binding.recyclerViewSongs.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewSongs.adapter = adapter
     }
-
 
     private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
