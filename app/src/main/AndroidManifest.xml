@@ -69,6 +69,7 @@
         <activity android:name=".auth.SigninActivity" />
         <activity android:name=".artists.ArtistSelectionActivity" android:exported="true"/>
         <activity android:name=".auth.LogininActivity" />
+        <activity android:name=".auth.ForgotPasswordActivity" />
 
 
 
